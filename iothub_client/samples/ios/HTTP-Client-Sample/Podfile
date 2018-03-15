@@ -1,0 +1,19 @@
+# Uncomment the next line to define a global platform for your project
+
+platform :ios, '9.0'
+
+workspace 'HTTP Client Sample WS'
+
+target 'HTTP Client Sample' do
+  # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for HTTP Client Sample
+  # AzureIoTuAmqp and AzureIoTuMqtt are dependencies of AzureIoTHubClient and must be
+  # included when using development pods. 
+  # For published pods, AzureIoTuAmqp and AzureIoTuMqtt may be omitted.
+  pod 'AzureIoTUtility'
+  pod 'AzureIoTuAmqp'
+  pod 'AzureIoTuMqtt'
+  pod 'AzureIoTHubClient'
+end
