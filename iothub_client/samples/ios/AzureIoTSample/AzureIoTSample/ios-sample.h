@@ -12,7 +12,9 @@ extern "C"
 int printf_to_sample_window(const char* format, ...);
 
 #define printf printf_to_sample_window
-#define IoTHubClient_LL_SetOption(a,b,c) 
+#define IoTHubClient_LL_SetOption(a,b,c)
+#define getchar()
+#define ThreadAPI_Sleep(a) ThreadAPI_Sleep(20)
 
 #define main run_ios_sample
 
