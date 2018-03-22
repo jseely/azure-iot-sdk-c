@@ -11,9 +11,13 @@ import UIKit
 class ViewController: UIViewController, logTarget {
     
     func addLogEntry(_ logEntry: String!) {
-        
+        DispatchQueue.main.async {
+            //[log_target addLogEntry:temp];
+        }
     }
     
+    @IBOutlet weak var txtLogDisplay: UITextView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
