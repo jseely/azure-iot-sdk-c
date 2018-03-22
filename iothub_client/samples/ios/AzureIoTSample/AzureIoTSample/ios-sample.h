@@ -12,6 +12,7 @@ extern "C"
 int printf_to_sample_window(const char* format, ...);
 
 #define printf printf_to_sample_window
+#define IoTHubClient_LL_SetOption(a,b,c) 
 
 #define main run_ios_sample
 

@@ -12,18 +12,40 @@ class ViewController: UIViewController, logTarget {
     
     func addLogEntry(_ logEntry: String!) {
         DispatchQueue.main.async {
-            //[log_target addLogEntry:temp];
+            self.logContent += logEntry
+            self.txtLogDisplay.text = self.logContent
         }
     }
     
+    var logContent = ""
+    //var iotThread = nil
+    
     @IBOutlet weak var txtLogDisplay: UITextView!
+    @IBOutlet weak var btnExit: UIButton!
+    
+    @IBAction func exitClicked(_ sender: UIButton) {
+        exit(0)
+    }
+    
+    func start() {
+        logContent = ""
+        // Connect the sample to the txtLogDisplay and start its main.
+        DispatchQueue.global(qos: .userInitiated).async {
+            init_connector(self)
+            
+            self.addLogEntry("\r\ndone")
+            //// The loop ended
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        DispatchQueue.global(qos: .userInitiated).async {
-            init_connector(self)
-        }
+        txtLogDisplay.isEditable = false
+        
+        
+        
+        ////////////////////
+        start()
     }
 
     override func didReceiveMemoryWarning() {

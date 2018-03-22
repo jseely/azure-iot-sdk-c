@@ -5,6 +5,7 @@
 #import <UIKit/UIKit.h>
 #import <azure_c_shared_utility/xlogging.h>
 #import "connector.h"
+#import <stdarg.h>
 
 static id <logTarget> log_target = nil;
 
@@ -31,7 +32,7 @@ static void ios_consolelogger_log(LOG_CATEGORY log_category, const char* file, c
             break;
     }
     
-    (void)snprintf(buffer, buffer_size, format, args);
+    (void)vsnprintf(buffer, buffer_size, format, args);
     [temp appendFormat:@"%s", buffer];
     va_end(args);
     
@@ -58,7 +59,7 @@ int printf_to_sample_window(const char* format, ...)
     va_start(args, format);
     NSMutableString *temp = [[NSMutableString alloc]initWithCapacity:256];
 
-    (void)snprintf(buffer, buffer_size, format, args);
+    (void)vsnprintf(buffer, buffer_size, format, args);
     [temp appendFormat:@"%s", buffer];
     va_end(args);
     

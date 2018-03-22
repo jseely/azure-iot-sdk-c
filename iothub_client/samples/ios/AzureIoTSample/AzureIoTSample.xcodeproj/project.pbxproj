@@ -15,7 +15,6 @@
 		5B9317FF2062E426006A2AA0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5B9317FD2062E426006A2AA0 /* LaunchScreen.storyboard */; };
 		5BE9E3AF2062EF8A000DDC0D /* connector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE9E3AE2062EF8A000DDC0D /* connector.m */; };
 		5BE9E3B2206323F4000DDC0D /* iothub_ll_telemetry_sample.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BE9E3B1206323F4000DDC0D /* iothub_ll_telemetry_sample.c */; };
-		5BE9E3B5206324B9000DDC0D /* certs.c in Sources */ = {isa = PBXBuildFile; fileRef = 5BE9E3B3206324B8000DDC0D /* certs.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +30,6 @@
 		5BE9E3AE2062EF8A000DDC0D /* connector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = connector.m; sourceTree = "<group>"; };
 		5BE9E3B020631467000DDC0D /* connector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = connector.h; sourceTree = "<group>"; };
 		5BE9E3B1206323F4000DDC0D /* iothub_ll_telemetry_sample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = iothub_ll_telemetry_sample.c; sourceTree = "<group>"; };
-		5BE9E3B3206324B8000DDC0D /* certs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = certs.c; sourceTree = "<group>"; };
 		5BE9E3B4206324B9000DDC0D /* certs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = certs.h; sourceTree = "<group>"; };
 		5BE9E3B620632ACF000DDC0D /* ios-sample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ios-sample.h"; sourceTree = "<group>"; };
 		B714F282A6AB7E48EC44B0F1 /* Pods_AzureIoTSample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AzureIoTSample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,7 +87,6 @@
 			isa = PBXGroup;
 			children = (
 				5BE9E3B620632ACF000DDC0D /* ios-sample.h */,
-				5BE9E3B3206324B8000DDC0D /* certs.c */,
 				5BE9E3B4206324B9000DDC0D /* certs.h */,
 				5BE9E3B1206323F4000DDC0D /* iothub_ll_telemetry_sample.c */,
 				5B9317F42062E426006A2AA0 /* AppDelegate.swift */,
@@ -245,7 +242,6 @@
 				5BE9E3AF2062EF8A000DDC0D /* connector.m in Sources */,
 				5BE9E3B2206323F4000DDC0D /* iothub_ll_telemetry_sample.c in Sources */,
 				5B9317F52062E426006A2AA0 /* AppDelegate.swift in Sources */,
-				5BE9E3B5206324B9000DDC0D /* certs.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
