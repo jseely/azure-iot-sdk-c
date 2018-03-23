@@ -1,10 +1,5 @@
-//
-//  ViewController.swift
-//  AzureIoTSample
-//
-//  Created by Roy Sprowl on 3/21/18.
-//  Copyright © 2018 Roy Sprowl. All rights reserved.
-//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 import UIKit
 
@@ -18,7 +13,6 @@ class ViewController: UIViewController, logTarget {
     }
     
     var logContent = ""
-    //var iotThread = nil
     
     @IBOutlet weak var txtLogDisplay: UITextView!
     @IBOutlet weak var btnExit: UIButton!
@@ -32,19 +26,12 @@ class ViewController: UIViewController, logTarget {
         // Connect the sample to the txtLogDisplay and start its main.
         DispatchQueue.global(qos: .userInitiated).async {
             init_connector(self)
-            
-            self.addLogEntry("\r\ndone")
-            //// The loop ended
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         txtLogDisplay.isEditable = false
-        
-        
-        
-        ////////////////////
         start()
     }
 

@@ -67,3 +67,13 @@ int printf_to_sample_window(const char* format, ...)
 
     return 0;
 }
+
+int fake_getchar(void)
+{
+    [log_target addLogEntry:@"\r\nDone"];
+    while(true)
+    {
+        ThreadAPI_Sleep(100);
+    }
+    return 0;
+}

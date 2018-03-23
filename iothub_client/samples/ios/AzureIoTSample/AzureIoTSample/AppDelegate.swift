@@ -1,10 +1,5 @@
-//
-//  AppDelegate.swift
-//  AzureIoTSample
-//
-//  Created by Roy Sprowl on 3/21/18.
-//  Copyright © 2018 Roy Sprowl. All rights reserved.
-//
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 import UIKit
 
