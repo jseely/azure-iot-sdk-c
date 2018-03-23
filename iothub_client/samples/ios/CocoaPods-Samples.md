@@ -44,6 +44,7 @@ are appropriate for working with the iOS sample application:
 
 * iothub_ll_c2d_sample (cloud to device)
 * iothub_ll_telemetry_sample (device to cloud)
+* iothub_client_sample_device_twin (both directions)
 
 Each sample can switch between five communication protocols: HTTP, MQTT, MQTT over websockets, 
 AMQP, and AMQP over websockets.
@@ -73,7 +74,8 @@ the connection string for your provisioned device.
 Start the project (command-R). The sample is designed for landscape viewing, so you may need to
 rotate the simulator. 
 
-The `iothub_ll_telemetry_sample` will send messages to the cloud and report its responses. 
+The `iothub_ll_telemetry_sample` will send messages to the cloud and report its responses, as will
+iothub_client_sample_device_twin.
 The `iothub_ll_c2d_sample` will wait for messages from the cloud and display them
 when they arrive. Device Explorer can send such messages.
 
