@@ -196,6 +196,7 @@ typedef struct MQTTTRANSPORT_HANDLE_DATA_TAG
 
     // Telemetry specific
     DLIST_ENTRY telemetry_waitingForAck;
+    bool auto_urlencode;
 
     // Controls frequency of reconnection logic.
     RETRY_CONTROL_HANDLE retry_control_handle;
@@ -578,7 +579,7 @@ static void sendMsgComplete(IOTHUB_MESSAGE_LIST* iothubMsgList, PMQTTTRANSPORT_H
     IoTHubClient_LL_SendComplete(transport_data->llClientHandle, &messageCompleted, confirmResult);
 }
 
-static STRING_HANDLE addPropertiesTouMqttMessage(IOTHUB_MESSAGE_HANDLE iothub_message_handle, const char* eventTopic)
+static STRING_HANDLE addPropertiesTouMqttMessage(IOTHUB_MESSAGE_HANDLE iothub_message_handle, const char* eventTopic, bool urlencode)
 {
     STRING_HANDLE result = STRING_construct(eventTopic);
     const char* const* propertyKeys;
@@ -602,6 +603,12 @@ static STRING_HANDLE addPropertiesTouMqttMessage(IOTHUB_MESSAGE_HANDLE iothub_me
             {
                 for (index = 0; index < propertyCount && result != NULL; index++)
                 {
+                    const char* property_key;
+                    const char* property_value;
+                    if (urlencode)
+                    {
+                        //property_key = 
+                    }
                     if (STRING_sprintf(result, "%s=%s%s", propertyKeys[index], propertyValues[index], propertyCount - 1 == index ? "" : PROPERTY_SEPARATOR) != 0)
                     {
                         LogError("Failed construting property string.");
@@ -751,7 +758,7 @@ static STRING_HANDLE addPropertiesTouMqttMessage(IOTHUB_MESSAGE_HANDLE iothub_me
 static int publish_mqtt_telemetry_msg(PMQTTTRANSPORT_HANDLE_DATA transport_data, MQTT_MESSAGE_DETAILS_LIST* mqttMsgEntry, const unsigned char* payload, size_t len)
 {
     int result;
-    STRING_HANDLE msgTopic = addPropertiesTouMqttMessage(mqttMsgEntry->iotHubMessageEntry->messageHandle, STRING_c_str(transport_data->topic_MqttEvent));
+    STRING_HANDLE msgTopic = addPropertiesTouMqttMessage(mqttMsgEntry->iotHubMessageEntry->messageHandle, STRING_c_str(transport_data->topic_MqttEvent), transport_data->auto_urlencode);
     if (msgTopic == NULL)
     {
         LogError("Failed adding properties to mqtt message");
@@ -2672,6 +2679,11 @@ IOTHUB_CLIENT_RESULT IoTHubTransport_MQTT_Common_SetOption(TRANSPORT_LL_HANDLE h
         {
             transport_data->raw_trace = *((bool*)value);
             mqtt_client_set_trace(transport_data->mqttClient, transport_data->log_trace, transport_data->raw_trace);
+            result = IOTHUB_CLIENT_OK;
+        }
+        else if (strcmp(OPTION_AUTO_URLENCODE, option) == 0)
+        {
+            transport_data->auto_urlencode = *((bool*)value);
             result = IOTHUB_CLIENT_OK;
         }
         /* Codes_SRS_IOTHUB_TRANSPORT_MQTT_COMMON_07_052: [ If the option parameter is set to "sas_token_lifetime" then the value shall be a size_t_ptr and the value will determine the mqtt sas token lifetime.] */
