@@ -64,8 +64,12 @@ Make sure you open the workspace, and not the similarly-named (without the `WS` 
 1. Select the AzureIoTSample project, choose "Add files...", and add your chosen sample `.c` file.
 1. Open the `.c` sample file.
 2. Add the line `#include "ios-sample.h"` below all the other include files.
-4. Near the top of the file, add a line like `#define USE_MQTT` to select the protocol you want.
-5. If you want either AMQP or MQTT over websockets, also add `#define USE_WEBSOCKETS`.
+4. Near the top of the file, uncomment a single protocol that you want to use:
+    * SAMPLE_HTTP
+    * SAMPLE_MQTT
+    * SAMPLE_MQTT_OVER_WEBSOCKETS
+    * SAMPLE_AMQP
+    * SAMPLE_AMQP_OVER_WEBSOCKETS
 3. Replace the `<insert connections string here>` string with
 the connection string for your provisioned device.
 
