@@ -205,6 +205,3 @@ build_all/windows/nuget.exe
 /cmake
 /build
 *.cert
-iothub_client/samples/ios/AzureIoTSample/AzureIoTSampleWS.xcworkspace/xcuserdata
-iothub_client/samples/ios/AzureIoTSample/AzureIoTSample.xcodeproj/xcuserdata
-iothub_client/samples/ios/AzureIoTSample/Pods
