@@ -77,3 +77,8 @@ int fake_getchar(void)
     }
     return 0;
 }
+
+int fake_IoTHubClient_LL_SetOption(void* iotHubClientHandle, const char* optionName, const void* value)
+{
+    return 0;
+}
