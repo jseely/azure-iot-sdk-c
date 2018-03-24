@@ -579,177 +579,315 @@ static void sendMsgComplete(IOTHUB_MESSAGE_LIST* iothubMsgList, PMQTTTRANSPORT_H
     IoTHubClient_LL_SendComplete(transport_data->llClientHandle, &messageCompleted, confirmResult);
 }
 
-static STRING_HANDLE addPropertiesTouMqttMessage(IOTHUB_MESSAGE_HANDLE iothub_message_handle, const char* eventTopic, bool urlencode)
+static int addBasicPropertiesTouMqttMessage(IOTHUB_MESSAGE_HANDLE iothub_message_handle, STRING_HANDLE topic_string, size_t* index_ptr, bool urlencode)
 {
-    STRING_HANDLE result = STRING_construct(eventTopic);
+    int result;
+    bool has_failed = false;
     const char* const* propertyKeys;
     const char* const* propertyValues;
     size_t propertyCount;
-    size_t index = 0;
-
-    // Construct Properties
+    size_t index = *index_ptr;
     MAP_HANDLE properties_map = IoTHubMessage_Properties(iothub_message_handle);
     if (properties_map != NULL)
     {
         if (Map_GetInternals(properties_map, &propertyKeys, &propertyValues, &propertyCount) != MAP_OK)
         {
             LogError("Failed to get the internals of the property map.");
-            STRING_delete(result);
-            result = NULL;
+            has_failed = true;
         }
         else
         {
             if (propertyCount != 0)
             {
-                for (index = 0; index < propertyCount && result != NULL; index++)
+                for (index = 0; index < propertyCount && topic_string != NULL; index++)
                 {
-                    const char* property_key;
-                    const char* property_value;
                     if (urlencode)
                     {
-                        //property_key = 
+                        STRING_HANDLE property_key = URL_EncodeString(propertyKeys[index]);
+                        STRING_HANDLE property_value = URL_EncodeString(propertyValues[index]);
+                        if ((property_key == NULL) || (property_value == NULL))
+                        {
+                            LogError("Failed URL Encoding properties");
+                            has_failed = true;
+                        }
+                        else if (STRING_sprintf(topic_string, "%s=%s%s", STRING_c_str(property_key), STRING_c_str(property_value), propertyCount - 1 == index ? "" : PROPERTY_SEPARATOR) != 0)
+                        {
+                            LogError("Failed constructing property string.");
+                            has_failed = true;
+                        }
+                        STRING_delete(property_key);
+                        STRING_delete(property_value);
                     }
-                    if (STRING_sprintf(result, "%s=%s%s", propertyKeys[index], propertyValues[index], propertyCount - 1 == index ? "" : PROPERTY_SEPARATOR) != 0)
+                    else
                     {
-                        LogError("Failed construting property string.");
-                        STRING_delete(result);
-                        result = NULL;
+                        if (STRING_sprintf(topic_string, "%s=%s%s", propertyKeys[index], propertyValues[index], propertyCount - 1 == index ? "" : PROPERTY_SEPARATOR) != 0)
+                        {
+                            LogError("Failed constructing property string.");
+                            has_failed = true;
+                        }
                     }
                 }
             }
         }
     }
 
-    /* Codes_SRS_IOTHUB_TRANSPORT_MQTT_COMMON_07_052: [ IoTHubTransport_MQTT_Common_DoWork shall check for the CorrelationId property and if found add the value as a system property in the format of $.cid=<id> ] */
-    if (result != NULL)
+    if (has_failed)
     {
-        const char* correlation_id = IoTHubMessage_GetCorrelationId(iothub_message_handle);
-        if (correlation_id != NULL)
+        result = __FAILURE__;
+    }
+    else
+    {
+        result = 0;
+    }
+    return result;
+}
+
+static int addSystemPropertiesTouMqttMessage(IOTHUB_MESSAGE_HANDLE iothub_message_handle, STRING_HANDLE topic_string, size_t* index_ptr, bool urlencode)
+{
+    (void)urlencode;
+    int result;
+    bool has_failed = false;
+    size_t index = *index_ptr;
+
+    /* Codes_SRS_IOTHUB_TRANSPORT_MQTT_COMMON_07_052: [ IoTHubTransport_MQTT_Common_DoWork shall check for the CorrelationId property and if found add the value as a system property in the format of $.cid=<id> ] */
+    const char* correlation_id = IoTHubMessage_GetCorrelationId(iothub_message_handle);
+    if (correlation_id != NULL)
+    {
+        if (urlencode)
         {
-            if (STRING_sprintf(result, "%s%%24.cid=%s", index == 0 ? "" : PROPERTY_SEPARATOR, correlation_id) != 0)
+            STRING_HANDLE correlation_id_handle = URL_EncodeString(correlation_id);
+            if (correlation_id_handle == NULL)
+            {
+                LogError("Failed URL encoding correlation id");
+                has_failed = true;
+            }
+            else if (STRING_sprintf(topic_string, "%s%%24.cid=%s", index == 0 ? "" : PROPERTY_SEPARATOR, STRING_c_str(correlation_id_handle)) != 0)
             {
                 LogError("Failed setting correlation id.");
-                STRING_delete(result);
-                result = NULL;
+                has_failed = true;
             }
-            index++;
+            STRING_delete(correlation_id_handle);
         }
+        else
+        {
+            if (STRING_sprintf(topic_string, "%s%%24.cid=%s", index == 0 ? "" : PROPERTY_SEPARATOR, correlation_id) != 0)
+            {
+                LogError("Failed setting correlation id.");
+                has_failed = true;
+            }
+        }
+        index++;
     }
 
     /* Codes_SRS_IOTHUB_TRANSPORT_MQTT_COMMON_07_053: [ IoTHubTransport_MQTT_Common_DoWork shall check for the MessageId property and if found add the value as a system property in the format of $.mid=<id> ] */
-    if (result != NULL)
+    if (!has_failed)
     {
         const char* msg_id = IoTHubMessage_GetMessageId(iothub_message_handle);
         if (msg_id != NULL)
         {
-            if (STRING_sprintf(result, "%s%%24.mid=%s", index == 0 ? "" : PROPERTY_SEPARATOR, msg_id) != 0)
+            if (urlencode)
             {
-                LogError("Failed setting message id.");
-                STRING_delete(result);
-                result = NULL;
+                STRING_HANDLE msg_id_handle = URL_EncodeString(msg_id);
+                if (msg_id_handle == NULL)
+                {
+                    LogError("Failed URL encoding message id");
+                    has_failed = true;
+                }
+                else if (STRING_sprintf(topic_string, "%s%%24.mid=%s", index == 0 ? "" : PROPERTY_SEPARATOR, STRING_c_str(msg_id_handle)) != 0)
+                {
+                    LogError("Failed setting correlation id.");
+                    has_failed = true;
+                }
+                STRING_delete(msg_id_handle);
+            }
+            else
+            {
+                if (STRING_sprintf(topic_string, "%s%%24.mid=%s", index == 0 ? "" : PROPERTY_SEPARATOR, msg_id) != 0)
+                {
+                    LogError("Failed setting message id.");
+                    has_failed = true;
+                }
             }
             index++;
         }
     }
 
+
     // Codes_SRS_IOTHUB_TRANSPORT_MQTT_COMMON_09_010: [ `IoTHubTransport_MQTT_Common_DoWork` shall check for the ContentType property and if found add the `value` as a system property in the format of `$.ct=<value>` ]
-    if (result != NULL)
+    if (!has_failed)
     {
         const char* content_type = IoTHubMessage_GetContentTypeSystemProperty(iothub_message_handle);
         if (content_type != NULL)
         {
-            if (STRING_sprintf(result, "%s%%24.%s=%s", index == 0 ? "" : PROPERTY_SEPARATOR, CONTENT_TYPE_PROPERTY, content_type) != 0)
+            if (urlencode)
             {
-                LogError("Failed setting content type.");
-                STRING_delete(result);
-                result = NULL;
+                STRING_HANDLE content_type_handle = URL_EncodeString(content_type);
+                if (content_type_handle == NULL)
+                {
+                    LogError("Failed URL encoding content type handle");
+                    has_failed = true;
+                }
+                else if (STRING_sprintf(topic_string, "%s%%24.%s=%s", index == 0 ? "" : PROPERTY_SEPARATOR, CONTENT_TYPE_PROPERTY, STRING_c_str(content_type_handle)) != 0)
+                {
+                    LogError("Failed setting content type.");
+                    has_failed = true;
+                }
+                STRING_delete(content_type_handle);
+            }
+            else
+            {
+                if (STRING_sprintf(topic_string, "%s%%24.%s=%s", index == 0 ? "" : PROPERTY_SEPARATOR, CONTENT_TYPE_PROPERTY, content_type) != 0)
+                {
+                    LogError("Failed setting content type.");
+                    has_failed = true;
+                }
             }
             index++;
         }
     }
 
     // Codes_SRS_IOTHUB_TRANSPORT_MQTT_COMMON_09_011: [ `IoTHubTransport_MQTT_Common_DoWork` shall check for the ContentEncoding property and if found add the `value` as a system property in the format of `$.ce=<value>` ]
-    if (result != NULL)
+    if (!has_failed)
     {
         const char* content_encoding = IoTHubMessage_GetContentEncodingSystemProperty(iothub_message_handle);
         if (content_encoding != NULL)
         {
-            if (STRING_sprintf(result, "%s%%24.%s=%s", index == 0 ? "" : PROPERTY_SEPARATOR, CONTENT_ENCODING_PROPERTY, content_encoding) != 0)
+            if (urlencode)
+            {
+                STRING_HANDLE content_encoding_handle = URL_EncodeString(content_encoding);
+                if (content_encoding_handle == NULL)
+                {
+                    LogError("Failed URL encoding content encoding");
+                    has_failed = true;
+                }
+                else if (STRING_sprintf(topic_string, "%s%%24.%s=%s", index == 0 ? "" : PROPERTY_SEPARATOR, CONTENT_ENCODING_PROPERTY, STRING_c_str(content_encoding_handle)) != 0)
+                {
+                    LogError("Failed setting content encoding.");
+                    has_failed = true;
+                }
+                STRING_delete(content_encoding_handle);
+            }
+            if (STRING_sprintf(topic_string, "%s%%24.%s=%s", index == 0 ? "" : PROPERTY_SEPARATOR, CONTENT_ENCODING_PROPERTY, content_encoding) != 0)
             {
                 LogError("Failed setting content encoding.");
-                STRING_delete(result);
-                result = NULL;
+                has_failed = true;
             }
             index++;
         }
     }
 
-    // Codes_SRS_IOTHUB_TRANSPORT_MQTT_COMMON_09_014: [ `IoTHubTransport_MQTT_Common_DoWork` shall check for the diagnostic properties including diagid and diagCreationTimeUtc and if found both add them as system property in the format of `$.diagid` and `$.diagctx` respectively]
-    if (result != NULL)
+    if (!has_failed)
     {
-        const IOTHUB_MESSAGE_DIAGNOSTIC_PROPERTY_DATA* diagnosticData = IoTHubMessage_GetDiagnosticPropertyData(iothub_message_handle);
-        if (diagnosticData != NULL)
-        {
-            const char* diag_id = diagnosticData->diagnosticId;
-            const char* creation_time_utc = diagnosticData->diagnosticCreationTimeUtc;
-            //diagid and creationtimeutc must be present/unpresent simultaneously
-            if (diag_id != NULL && creation_time_utc != NULL)
-            {
-                if (STRING_sprintf(result, "%s%%24.%s=%s", index == 0 ? "" : PROPERTY_SEPARATOR, DIAGNOSTIC_ID_PROPERTY, diag_id) != 0)
-                {
-                    LogError("Failed setting diagnostic id");
-                    STRING_delete(result);
-                    result = NULL;
-                }
-                index++;
+        result = 0;
+    }
+    else
+    {
+        result = __FAILURE__;
+    }
+    return result;
+}
 
-                if (result != NULL)
+static int addDiagnosticPropertiesTouMqttMessage(IOTHUB_MESSAGE_HANDLE iothub_message_handle, STRING_HANDLE topic_string, size_t* index_ptr, bool urlencode)
+{
+    (void)urlencode;
+    int result;
+    bool has_failed = false;
+    size_t index = *index_ptr;
+
+    // Codes_SRS_IOTHUB_TRANSPORT_MQTT_COMMON_09_014: [ `IoTHubTransport_MQTT_Common_DoWork` shall check for the diagnostic properties including diagid and diagCreationTimeUtc and if found both add them as system property in the format of `$.diagid` and `$.diagctx` respectively]
+    const IOTHUB_MESSAGE_DIAGNOSTIC_PROPERTY_DATA* diagnosticData = IoTHubMessage_GetDiagnosticPropertyData(iothub_message_handle);
+    if (diagnosticData != NULL)
+    {
+        const char* diag_id = diagnosticData->diagnosticId;
+        const char* creation_time_utc = diagnosticData->diagnosticCreationTimeUtc;
+        //diagid and creationtimeutc must be present/unpresent simultaneously
+        if (diag_id != NULL && creation_time_utc != NULL)
+        {
+            if (STRING_sprintf(topic_string, "%s%%24.%s=%s", index == 0 ? "" : PROPERTY_SEPARATOR, DIAGNOSTIC_ID_PROPERTY, diag_id) != 0)
+            {
+                LogError("Failed setting diagnostic id");
+                has_failed = true;
+            }
+            index++;
+
+            if (!has_failed)
+            {
+                //construct diagnostic context, it should be urlencode(key1=value1,key2=value2)
+                STRING_HANDLE diagContextHandle = STRING_construct_sprintf("%s=%s", DIAGNOSTIC_CONTEXT_CREATION_TIME_UTC_PROPERTY, creation_time_utc);
+                if (diagContextHandle == NULL)
                 {
-                    //construct diagnostic context, it should be urlencode(key1=value1,key2=value2)
-                    STRING_HANDLE diagContextHandle = STRING_construct_sprintf("%s=%s", DIAGNOSTIC_CONTEXT_CREATION_TIME_UTC_PROPERTY, creation_time_utc);
-                    if (diagContextHandle == NULL)
+                    LogError("Failed constructing diagnostic context");
+                    has_failed = true;
+                }
+                else
+                {
+                    //Add other diagnostic context properties here if have more
+                    STRING_HANDLE encodedContextValueHandle = URL_Encode(diagContextHandle);
+                    const char* encodedContextValueString = NULL;
+                    if (encodedContextValueHandle != NULL &&
+                        (encodedContextValueString = STRING_c_str(encodedContextValueHandle)) != NULL)
                     {
-                        LogError("Failed constructing diagnostic context");
-                        STRING_delete(result);
-                        result = NULL;
+                        if (STRING_sprintf(topic_string, "%s%%24.%s=%s", index == 0 ? "" : PROPERTY_SEPARATOR, DIAGNOSTIC_CONTEXT_PROPERTY, encodedContextValueString) != 0)
+                        {
+                            LogError("Failed setting diagnostic context");
+                            has_failed = true;
+                        }
+                        STRING_delete(encodedContextValueHandle);
+                        encodedContextValueHandle = NULL;
                     }
                     else
                     {
-                        //Add other diagnostic context properties here if have more
-                        STRING_HANDLE encodedContextValueHandle = URL_Encode(diagContextHandle);
-                        const char* encodedContextValueString = NULL;
-                        if (encodedContextValueHandle != NULL &&
-                            (encodedContextValueString = STRING_c_str(encodedContextValueHandle)) != NULL)
-                        {
-                            if (STRING_sprintf(result, "%s%%24.%s=%s", index == 0 ? "" : PROPERTY_SEPARATOR, DIAGNOSTIC_CONTEXT_PROPERTY, encodedContextValueString) != 0)
-                            {
-                                LogError("Failed setting diagnostic context");
-                                STRING_delete(result);
-                                result = NULL;
-                            }
-                            STRING_delete(encodedContextValueHandle);
-                            encodedContextValueHandle = NULL;
-                        }
-                        else
-                        {
-                            LogError("Failed encoding diagnostic context value");
-                            STRING_delete(result);
-                            result = NULL;
-                        }
-                        STRING_delete(diagContextHandle);
-                        diagContextHandle = NULL;
-                        index++;
+                        LogError("Failed encoding diagnostic context value");
+                        has_failed = true;
                     }
+                    STRING_delete(diagContextHandle);
+                    diagContextHandle = NULL;
+                    index++;
                 }
             }
-            else if (diag_id != NULL || creation_time_utc != NULL)
-            {
-                // Codes_SRS_IOTHUB_TRANSPORT_MQTT_COMMON_09_015: [ `IoTHubTransport_MQTT_Common_DoWork` shall check whether diagid and diagCreationTimeUtc be present simultaneously, treat as error if not]
-                LogError("diagid and diagcreationtimeutc must be present simultaneously.");
-                STRING_delete(result);
-                result = NULL;
-            }
         }
+        else if (diag_id != NULL || creation_time_utc != NULL)
+        {
+            // Codes_SRS_IOTHUB_TRANSPORT_MQTT_COMMON_09_015: [ `IoTHubTransport_MQTT_Common_DoWork` shall check whether diagid and diagCreationTimeUtc be present simultaneously, treat as error if not]
+            LogError("diagid and diagcreationtimeutc must be present simultaneously.");
+            has_failed = true;
+        }
+    }
+
+    if (has_failed)
+    {
+        result = __FAILURE__;
+    }
+    else
+    {
+        result = 0;
+    }
+    return result;
+}
+
+
+static STRING_HANDLE addPropertiesTouMqttMessage(IOTHUB_MESSAGE_HANDLE iothub_message_handle, const char* eventTopic, bool urlencode)
+{
+    STRING_HANDLE result = STRING_construct(eventTopic);
+    size_t index = 0;
+
+    if (addBasicPropertiesTouMqttMessage(iothub_message_handle, result, &index, urlencode) != 0)
+    {
+        LogError("Failed adding Properties to uMQTT Message");
+        STRING_delete(result);
+        result = NULL;
+    }
+    else if (addSystemPropertiesTouMqttMessage(iothub_message_handle, result, &index, urlencode) != 0)
+    {
+        LogError("Failed adding System Properties to uMQTT Message");
+        STRING_delete(result);
+        result = NULL;
+    }
+    else if (addDiagnosticPropertiesTouMqttMessage(iothub_message_handle, result, &index, urlencode) != 0)
+    {
+        LogError("Failed adding Diagnostic Properties to uMQTT Message");
+        STRING_delete(result);
+        result = NULL;
     }
 
     return result;
@@ -2021,6 +2159,7 @@ static PMQTTTRANSPORT_HANDLE_DATA InitializeTransportHandleData(const IOTHUB_CLI
                         state->authorization_module = auth_module;
                         state->isProductInfoSet = false;
                         state->option_sas_token_lifetime_secs = SAS_TOKEN_DEFAULT_LIFETIME;
+                        state->auto_urlencode = false;
                     }
                 }
             }
