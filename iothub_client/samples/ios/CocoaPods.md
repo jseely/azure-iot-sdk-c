@@ -7,6 +7,9 @@ available as four Objective-C [CocoaPods](https://cocoapods.org/):
 * [AzureIoTuMqtt](https://cocoapods.org/?q=AzureIoTuMqtt) contains the [Azure IoT MQTT library](https://github.com/Azure/azure-umqtt-c)
 * [AzureIoTHubClient](https://cocoapods.org/?q=AzureIoTHubClient) contains the [Azure IoT Hub Client](https://github.com/azure/azure-iot-sdk-c)
 
+Most applications will only need to specify the [AzureIoTHubClient](https://cocoapods.org/?q=AzureIoTHubClient)
+in their Podfile, and it will bring in the others as dependencies.
+
 #### Samples
 Samples in Swift for iOS are [here](/iothub_client/samples/ios). 
 
