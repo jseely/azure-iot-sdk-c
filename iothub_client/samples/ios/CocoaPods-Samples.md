@@ -42,9 +42,12 @@ This will cause CocoaPods to read the `Podfile` and install the pods accordingly
 The `azure-iot-sdk-c/iothub_client/samples` directory some Azure IoT samples that
 are appropriate for working with the iOS sample application:
 
-* iothub_ll_c2d_sample (cloud to device)
-* iothub_ll_telemetry_sample (device to cloud)
-* iothub_client_sample_device_twin (both directions)
+* **iothub_ll_c2d_sample** (cloud to device) This sample demonstrates sending messages
+from the cloud to the device. Device Explorer is used to send the messages.
+* **iothub_ll_telemetry_sample** The telemetry sample demonstrates sending messages
+from the device to the cloud.
+* **iothub_client_sample_device_twin** This sample demonstrates Azure IoT _twin_, which 
+automatically keeps device and cloud states in sync with each other.
 
 Each sample can switch between five communication protocols: HTTP, MQTT, MQTT over websockets, 
 AMQP, and AMQP over websockets.
