@@ -476,10 +476,6 @@ IoTHubClient_LL_SetOption sets the runtime option "optionName" to the value poin
 
 **SRS_IOTHUBCLIENT_LL_12_023: [** `c2d_keep_alive_freq_secs` - shall set the cloud to device keep alive frequency (in seconds) for the connection. Zero means keep alive will not be sent. **]**
 
-**SRS_IOTHUBCLIENT_LL_30_000: [** `blob_xfr_timeout` - shall set the timeout in seconds for blob transfer operations. **]**
-
-**SRS_IOTHUBCLIENT_LL_30_001: [** A `blob_xfr_timeout` value of 0 shall not set any timeout on the transport (default behavior). **]**
-
 **SRS_IOTHUBCLIENT_LL_02_099: [** `IoTHubClient_LL_SetOption` shall return according to the table below  **]**
 
 |Name	                |Description
@@ -699,6 +695,11 @@ Handled options are
 **SRS_IOTHUBCLIENT_LL_02_100: [** `x509certificate` - then `value` then is a null terminated string that contains the x509 certificate. **]**
 
 **SRS_IOTHUBCLIENT_LL_02_101: [** `x509privatekey` - then `value` is a null terminated string that contains the x509 privatekey. **]**
+
+
+**SRS_IOTHUBCLIENT_LL_30_000: [** `blob_xfr_timeout` - shall set the timeout in seconds for blob transfer operations. **]**
+
+**SRS_IOTHUBCLIENT_LL_30_001: [** A `blob_xfr_timeout` value of 0 shall not set any timeout on the transport (default behavior). **]**
 
 **SRS_IOTHUBCLIENT_LL_02_102: [** If an unknown option is presented then `IoTHubClient_LL_UploadToBlob_SetOption` shall return `IOTHUB_CLIENT_INVALID_ARG`. **]**
 
