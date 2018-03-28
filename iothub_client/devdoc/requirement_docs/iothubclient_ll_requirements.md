@@ -478,6 +478,8 @@ IoTHubClient_LL_SetOption sets the runtime option "optionName" to the value poin
 
 **SRS_IOTHUBCLIENT_LL_30_000: [** `blob_xfr_timeout` - shall set the timeout in seconds for blob transfer operations. **]**
 
+**SRS_IOTHUBCLIENT_LL_30_001: [** A `blob_xfr_timeout` value of 0 shall not set any timeout on the transport (default behavior). **]**
+
 **SRS_IOTHUBCLIENT_LL_02_099: [** `IoTHubClient_LL_SetOption` shall return according to the table below  **]**
 
 |Name	                |Description
