@@ -42,7 +42,7 @@ DPS_LL_SetOption(handle, OPTION_HTTP_PROXY, &http_proxy);
 | Option Name        | Option Define              | Value Type         | Description
 |--------------------|----------------------------|--------------------|-------------------------------
 | `"messageTimeout"` | OPTION_MESSAGE_TIMEOUT     | tickcounter_ms_t*  | Timeout used for message on the message queue
-| `"blob_xfr_timeout"` | OPTION_BLOB_TRANSFER_TIMEOUT     | long*  | Timeout in milliseconds of blob transfers
+| `"blob_xfr_timeout"` | OPTION_BLOB_TRANSFER_TIMEOUT     | long*  | Timeout in milliseconds of blob uploads (downloads default to 242 seconds)
 | `"product_info"`   | OPTION_PRODUCT_INFO        | const char*        | User defined Product identifier sent to the IoThub service
 | `"TrustedCerts"`   | OPTION_TRUSTED_CERT        | const char*        | Azure Server certificate used to validate TLS connection to iothub
 
