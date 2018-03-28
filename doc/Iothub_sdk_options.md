@@ -42,6 +42,7 @@ DPS_LL_SetOption(handle, OPTION_HTTP_PROXY, &http_proxy);
 | Option Name        | Option Define              | Value Type         | Description
 |--------------------|----------------------------|--------------------|-------------------------------
 | `"messageTimeout"` | OPTION_MESSAGE_TIMEOUT     | tickcounter_ms_t*  | Timeout used for message on the message queue
+| `"blob_xfr_timeout"` | OPTION_BLOB_TRANSFER_TIMEOUT     | long*  | Timeout in milliseconds of blob transfers
 | `"product_info"`   | OPTION_PRODUCT_INFO        | const char*        | User defined Product identifier sent to the IoThub service
 | `"TrustedCerts"`   | OPTION_TRUSTED_CERT        | const char*        | Azure Server certificate used to validate TLS connection to iothub
 
@@ -52,7 +53,7 @@ DPS_LL_SetOption(handle, OPTION_HTTP_PROXY, &http_proxy);
 | Option Name            | Option Define             | Value Type         | Description
 |------------------------|---------------------------|--------------------|-------------------------------
 | `"logtrace"`           | OPTION_LOG_TRACE          | bool* value        | Turn on and off log tracing for the transport
-| `"sas_token_lifetime"` | OPTION_SAS_TOKEN_LIFETIME | `size_t`* value    | Length of time in seconds used for lifetime of sas token.
+| `"sas_token_lifetime"` | OPTION_SAS_TOKEN_LIFETIME | size_t* value    | Length of time in seconds used for lifetime of sas token.
 | `"x509certificate"`    | OPTION_X509_CERT          | const char*        | Sets an RSA x509 certificate used for connection authentication
 | `"x509privatekey"`     | OPTION_X509_PRIVATE_KEY   | const char*        | Sets the private key for the RSA x509 certificate
 | `"x509EccCertificate"` | OPTION_X509_ECC_CERT      | const char*        | Sets the ECC x509 certificate used for connection authentication
