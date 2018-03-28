@@ -212,11 +212,13 @@ ctest -C "debug" -V
 
 ## Set up a macOS (Mac OS X) development environment
 
-This section describes how to set up a development environment for the C SDK on [macOS]. [CMake] will create makefiles and [make] will use them to compile the C SDK source code using [clang]. [clang] is included with [XCode].
+This section describes how to set up a development environment for the C SDK on [macOS]. [CMake] will 
+create a XCode project containing the various SDK libraries and samples.
 
-We've tested the device SDK for C on macOS Sierra, with XCode version 8.
+We've tested the device SDK for C on macOS High Sierra, with XCode version 9.2.
 
-- Make sure all dependencies are installed before building the SDK. For macOS, you can use [Homebrew] to install the right packages:
+- Make sure all dependencies are installed before building the SDK. For macOS, you can use [Homebrew] to 
+install the right packages. The OpenSSL package is optional.
 
   ```Shell
   brew update
@@ -239,37 +241,48 @@ We've tested the device SDK for C on macOS Sierra, with XCode version 8.
   ```
   > The `--recursive` argument instructs git to clone other GitHub repos this SDK depends on. Dependencies are listed [here](https://github.com/Azure/azure-iot-sdk-c/blob/master/.gitmodules).
 
-### Build the C SDK
+### Generate the XCode project
 
-To build the SDK:
+To generate the XCode project:
 
 ```Shell
 cd azure-iot-sdk-c
 mkdir cmake
 cd cmake
-cmake -DOPENSSL_ROOT_DIR:PATH=/usr/local/opt/openssl ..
-cmake --build .  # append '-- -j <n>' to run <n> jobs in parallel
+cmake -G Xcode ..
 ```
 
-  > To build Debug binaries, add the corresponding CMake option to the project generation command above, e.g.:
+If project generation completes successfully, you should see an XCode project file (.xcodeproj) under 
+the `cmake` folder. To build the SDK, do one of the following:
+
+- Open **cmake\azure_iot_sdks.xcodeproj** in XCode and use XCode's build and run features, **OR**
+- Have CMake build and run tests. For example:
 
 ```Shell
-cmake -DOPENSSL_ROOT_DIR:PATH=/usr/local/opt/openssl -DCMAKE_BUILD_TYPE=Debug ..
+cmake -G Xcode -Drun_unittests=ON ..
+cmake --build .
+ctest -C "debug" -V
+```
+
+To build Debug binaries, add the corresponding CMake option to the project generation command above, e.g.:
+
+```Shell
+cmake -G Xcode -DCMAKE_BUILD_TYPE=Debug ..
 ```
 
 There are many CMake configuration options available for building the SDK. For example, you can disable one of the available protocol stacks by adding an argument to the CMake project generation command:
 
-  > ```Shell
-  > cmake -Duse_amqp=OFF ..
-  > ```
+```Shell
+cmake -Duse_amqp=OFF ..
+```
 
 Also, you can build and run unit tests:
 
-  > ```Shell
-  > cmake -Drun_unittests=ON ..
-  > cmake --build .
-  > ctest -C "debug" -V
-  > ```
+```Shell
+cmake -Drun_unittests=ON ..
+cmake --build .
+ctest -C "debug" -V
+```
 
 Note: Any samples you built will not work until you configure them with a valid IoT Hub device connection string. For more information, see the [samples section](#samplecode) below.
 
