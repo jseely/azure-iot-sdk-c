@@ -43,7 +43,7 @@ The `azure-iot-sdk-c/iothub_client/samples` directory some Azure IoT samples tha
 are appropriate for working with the iOS sample application:
 
 * **iothub_ll_c2d_sample** (cloud to device) This sample demonstrates sending messages
-from the cloud to the device. Device Explorer is used to send the messages.
+from the cloud to the device. Device Explorer can be used to send the messages.
 * **iothub_ll_telemetry_sample** The telemetry sample demonstrates sending messages
 from the device to the cloud. See 
 [here](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-d2c) for details.

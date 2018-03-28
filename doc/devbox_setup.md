@@ -256,7 +256,7 @@ If project generation completes successfully, you should see an XCode project fi
 the `cmake` folder. To build the SDK, do one of the following:
 
 - Open **cmake\azure_iot_sdks.xcodeproj** in XCode and use XCode's build and run features, **OR**
-- Have CMake build and run tests. For example:
+- Have CMake build and run unit tests. For example:
 
 ```Shell
 cmake -G Xcode -Drun_unittests=ON ..
