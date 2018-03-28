@@ -45,12 +45,14 @@ are appropriate for working with the iOS sample application:
 * **iothub_ll_c2d_sample** (cloud to device) This sample demonstrates sending messages
 from the cloud to the device. Device Explorer is used to send the messages.
 * **iothub_ll_telemetry_sample** The telemetry sample demonstrates sending messages
-from the device to the cloud.
-* **iothub_client_sample_device_twin** This sample demonstrates Azure IoT _twin_, which 
-automatically keeps device and cloud states in sync with each other.
+from the device to the cloud. See 
+[here](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-d2c) for details.
+* **iothub_client_sample_device_twin** This sample demonstrates how to use device 
+twins in IoT Hub.  See [here](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-device-twins) 
+for details.
 
-Each sample can switch between five communication protocols: HTTP, MQTT, MQTT over websockets, 
-AMQP, and AMQP over websockets.
+Each sample can use one of the five communication protocols supported: HTTP, MQTT, 
+MQTT over Websockets, AMQP, and AMQP over Websockets.
 
 Choose one of these samples and copy its `.c` file into your AzureIoTSample project directory
 (it should be in the same directory with `ios-sample.h`).
