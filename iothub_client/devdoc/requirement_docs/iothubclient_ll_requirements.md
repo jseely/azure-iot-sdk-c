@@ -478,7 +478,7 @@ IoTHubClient_LL_SetOption sets the runtime option "optionName" to the value poin
 
 **SRS_IOTHUBCLIENT_LL_30_010: [** `blob_xfr_timeout` - `IoTHubClient_LL_SetOption` shall pass this option to `IoTHubClient_UploadToBlob_SetOption` and return its result. **]**
 
-**SRS_IOTHUBCLIENT_LL_30_011: [** `IoTHubClient_LL_SetOption` shall always pass unhandled options to `IoTHubClient_UploadToBlob_SetOption`. **]**
+**SRS_IOTHUBCLIENT_LL_30_011: [** `IoTHubClient_LL_SetOption` shall always pass unhandled options to `Transport_SetOption`. **]**
 
 **SRS_IOTHUBCLIENT_LL_30_012: [** If `Transport_SetOption` fails, `IoTHubClient_LL_SetOption` shall return that failure code. **]**
 
