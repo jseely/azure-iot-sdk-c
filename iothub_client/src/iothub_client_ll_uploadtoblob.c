@@ -71,7 +71,7 @@ typedef struct IOTHUB_CLIENT_LL_UPLOADTOBLOB_HANDLE_DATA_TAG
     char* certificates; /*if there are any certificates used*/
     HTTP_PROXY_OPTIONS http_proxy_options;
     size_t curl_verbose;
-    size_t blob_xfr_timeout;
+    size_t blob_upload_timeout_secs;
 }IOTHUB_CLIENT_LL_UPLOADTOBLOB_HANDLE_DATA;
 
 typedef struct BLOB_UPLOAD_CONTEXT_TAG
@@ -124,7 +124,7 @@ IOTHUB_CLIENT_LL_UPLOADTOBLOB_HANDLE IoTHubClient_LL_UploadToBlob_Create(const I
                 handleData->certificates = NULL;
                 memset(&(handleData->http_proxy_options), 0, sizeof(HTTP_PROXY_OPTIONS));
                 handleData->curl_verbose = 0;
-                handleData->blob_xfr_timeout = 0;
+                handleData->blob_upload_timeout_secs = 0;
 
                 if ((config->deviceSasToken != NULL) && (config->deviceKey == NULL))
                 {
@@ -806,20 +806,20 @@ static IOTHUB_CLIENT_FILE_UPLOAD_GET_DATA_RESULT FileUpload_GetData_Callback(IOT
     return IOTHUB_CLIENT_FILE_UPLOAD_GET_DATA_OK;
 }
 
-static bool set_transfer_timeout(IOTHUB_CLIENT_LL_UPLOADTOBLOB_HANDLE_DATA* handleData, HTTPAPIEX_HANDLE iotHubHttpApiExHandle)
+static HTTPAPIEX_RESULT set_transfer_timeout(IOTHUB_CLIENT_LL_UPLOADTOBLOB_HANDLE_DATA* handleData, HTTPAPIEX_HANDLE iotHubHttpApiExHandle)
 {
     HTTPAPIEX_RESULT result;
-    if (handleData->blob_xfr_timeout != 0)
+    if (handleData->blob_upload_timeout_secs != 0)
     {
         // Convert the timeout to milliseconds for curl
-        long http_timeout = (long)handleData->blob_xfr_timeout * 1000;
+        long http_timeout = (long)handleData->blob_upload_timeout_secs * 1000;
         result = HTTPAPIEX_SetOption(iotHubHttpApiExHandle, OPTION_HTTP_TIMEOUT, &http_timeout);
     }
     else
     {
         result = HTTPAPIEX_OK;
     }
-    return result == HTTPAPIEX_OK;
+    return result;
 }
 
 IOTHUB_CLIENT_RESULT IoTHubClient_LL_UploadMultipleBlocksToBlob_Impl(IOTHUB_CLIENT_LL_UPLOADTOBLOB_HANDLE handle, const char* destinationFileName, IOTHUB_CLIENT_FILE_UPLOAD_GET_DATA_CALLBACK_EX getDataCallbackEx, void* context)
@@ -851,8 +851,8 @@ IOTHUB_CLIENT_RESULT IoTHubClient_LL_UploadMultipleBlocksToBlob_Impl(IOTHUB_CLIE
             LogError("unable to HTTPAPIEX_Create");
             result = IOTHUB_CLIENT_ERROR;
         }
-        /*Codes_SRS_IOTHUBCLIENT_LL_30_020: [ If the blob_xfr_timeout option has been set to non-zero, IoTHubClient_LL_UploadMultipleBlocksToBlob(Ex) shall set the timeout on the underlying transport accordingly. ]*/
-        else if (!set_transfer_timeout(handleData, iotHubHttpApiExHandle))
+        /*Codes_SRS_IOTHUBCLIENT_LL_30_020: [ If the blob_upload_timeout_secs option has been set to non-zero, IoTHubClient_LL_UploadMultipleBlocksToBlob(Ex) shall set the timeout on the underlying transport accordingly. ]*/
+        else if (set_transfer_timeout(handleData, iotHubHttpApiExHandle) != HTTPAPIEX_OK)
         {
             LogError("unable to set blob transfer timeout");
             result = IOTHUB_CLIENT_ERROR;
@@ -1309,9 +1309,9 @@ IOTHUB_CLIENT_RESULT IoTHubClient_LL_UploadToBlob_SetOption(IOTHUB_CLIENT_LL_UPL
             handleData->curl_verbose = *(size_t*)value;
             result = IOTHUB_CLIENT_OK;
         }
-        else if (strcmp(optionName, OPTION_BLOB_TRANSFER_TIMEOUT) == 0)
+        else if (strcmp(optionName, OPTION_BLOB_UPLOAD_TIMEOUT_SECS) == 0)
         {
-            handleData->blob_xfr_timeout = *(size_t*)value;
+            handleData->blob_upload_timeout_secs = *(size_t*)value;
             result = IOTHUB_CLIENT_OK;
         }
         else
