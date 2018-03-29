@@ -39,12 +39,12 @@ DPS_LL_SetOption(handle, OPTION_HTTP_PROXY, &http_proxy);
 
 ### IoThub_Client
 
-| Option Name        | Option Define              | Value Type         | Description
-|--------------------|----------------------------|--------------------|-------------------------------
-| `"messageTimeout"` | OPTION_MESSAGE_TIMEOUT     | tickcounter_ms_t*  | Timeout used for message on the message queue
-| `"blob_xfr_timeout"` | OPTION_BLOB_TRANSFER_TIMEOUT     | size_t*  | Timeout in seconds of blob uploads
-| `"product_info"`   | OPTION_PRODUCT_INFO        | const char*        | User defined Product identifier sent to the IoThub service
-| `"TrustedCerts"`   | OPTION_TRUSTED_CERT        | const char*        | Azure Server certificate used to validate TLS connection to iothub
+| Option Name                       | Option Define                   | Value Type         | Description
+|-----------------------------------|---------------------------------|--------------------|-------------------------------
+| `"messageTimeout"`              | OPTION_MESSAGE_TIMEOUT         | tickcounter_ms_t*  | Timeout used for message on the message queue
+| `"blob_upload_timeout_secs"`  | OPTION_BLOB_UPLOAD_TIMEOUT_SECS | size_t*            | Timeout in seconds of blob uploads
+| `"product_info"`                | OPTION_PRODUCT_INFO             | const char*        | User defined Product identifier sent to the IoThub service
+| `"TrustedCerts"`                | OPTION_TRUSTED_CERT             | const char*        | Azure Server certificate used to validate TLS connection to iothub
 
 <a name="transport_option"></a>
 

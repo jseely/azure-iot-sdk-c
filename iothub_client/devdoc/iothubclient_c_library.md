@@ -463,7 +463,7 @@ IoTHubClient_SetOption shall set a runtime option identified by parameter `optio
 to an unsigned int with the meaning of "miliseconds". This is only supported for HTTP protocol so far. 
 When the HTTP protocol uses CURL, the meaning of the parameter is total request time. 
 When the HTTP protocol uses winhttp, the meaning is dwSendTimeout and dwReceiveTimeout parameters of WinHttpSetTimeouts API.
-- "blob_xfr_timeout" - the maximum time in seconds allowed for a blob transfer. The value is a
+- "blob_upload_timeout_secs" - the maximum time in seconds allowed for a blob transfer. The value is a
 pointer to a `size_t`. A value of 0 uses the default timeout for the underlying transport.
 - "CURLOPT_LOW_SPEED_LIMIT" - only available for HTTP protocol and only when CURL is used. It has the same meaning as CURL's option with the same name. value is pointer to a long.
 - "CURLOPT_LOW_SPEED_TIME"  - only available for HTTP protocol and only when CURL is used. It has the same meaning as CURL's option with the same name. value is pointer to a long.

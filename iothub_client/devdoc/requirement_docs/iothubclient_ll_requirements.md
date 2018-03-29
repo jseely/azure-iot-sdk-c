@@ -476,7 +476,7 @@ IoTHubClient_LL_SetOption sets the runtime option "optionName" to the value poin
 
 **SRS_IOTHUBCLIENT_LL_12_023: [** `c2d_keep_alive_freq_secs` - shall set the cloud to device keep alive frequency (in seconds) for the connection. Zero means keep alive will not be sent. **]**
 
-**SRS_IOTHUBCLIENT_LL_30_010: [** `blob_xfr_timeout` - `IoTHubClient_LL_SetOption` shall pass this option to `IoTHubClient_UploadToBlob_SetOption` and return its result. **]**
+**SRS_IOTHUBCLIENT_LL_30_010: [** `blob_upload_timeout_secs` - `IoTHubClient_LL_SetOption` shall pass this option to `IoTHubClient_UploadToBlob_SetOption` and return its result. **]**
 
 **SRS_IOTHUBCLIENT_LL_30_011: [** `IoTHubClient_LL_SetOption` shall always pass unhandled options to `Transport_SetOption
 `. **]**
@@ -523,7 +523,7 @@ extern IOTHUB_CLIENT_RESULT IoTHubClient_LL_UploadMultipleBlocksToBlobEx(IOTHUB_
 
 **SRS_IOTHUBCLIENT_LL_99_007: [** If `getDataCallback` is `NULL` then `IoTHubClient_LL_UploadMultipleBlocksToBlob(Ex)` shall fail and return `IOTHUB_CLIENT_INVALID_ARG`. **]**
 
-**SRS_IOTHUBCLIENT_LL_30_020: [** If the `blob_xfr_timeout` option has been set to non-zero, `IoTHubClient_LL_UploadMultipleBlocksToBlob(Ex)` shall set the timeout on the underlying transport accordingly. **]**
+**SRS_IOTHUBCLIENT_LL_30_020: [** If the `blob_upload_timeout_secs` option has been set to non-zero, `IoTHubClient_LL_UploadMultipleBlocksToBlob(Ex)` shall set the timeout on the underlying transport accordingly. **]**
 
 These are the 3 steps that are required to upload a file to Azure Blob Storage using IoTHub: 
 step 1: get the SasUri components from IoTHub service
@@ -696,9 +696,9 @@ Handled options are
 **SRS_IOTHUBCLIENT_LL_02_101: [** `x509privatekey` - then `value` is a null terminated string that contains the x509 privatekey. **]**
 
 
-**SRS_IOTHUBCLIENT_LL_30_000: [** `blob_xfr_timeout` - shall set the timeout in seconds for blob transfer operations. **]**
+**SRS_IOTHUBCLIENT_LL_30_000: [** `blob_upload_timeout_secs` - shall set the timeout in seconds for blob transfer operations. **]**
 
-**SRS_IOTHUBCLIENT_LL_30_001: [** A `blob_xfr_timeout` value of 0 shall not set any timeout on the transport (default behavior). **]**
+**SRS_IOTHUBCLIENT_LL_30_001: [** A `blob_upload_timeout_secs` value of 0 shall not set any timeout on the transport (default behavior). **]**
 
 **SRS_IOTHUBCLIENT_LL_02_102: [** If an unknown option is presented then `IoTHubClient_LL_UploadToBlob_SetOption` shall return `IOTHUB_CLIENT_INVALID_ARG`. **]**
 
