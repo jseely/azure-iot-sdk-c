@@ -476,17 +476,13 @@ IoTHubClient_LL_SetOption sets the runtime option "optionName" to the value poin
 
 **SRS_IOTHUBCLIENT_LL_12_023: [** `c2d_keep_alive_freq_secs` - shall set the cloud to device keep alive frequency (in seconds) for the connection. Zero means keep alive will not be sent. **]**
 
-**SRS_IOTHUBCLIENT_LL_02_099: [** `IoTHubClient_LL_SetOption` shall return according to the table below  **]**
+**SRS_IOTHUBCLIENT_LL_30_010: [** `blob_xfr_timeout` - `IoTHubClient_LL_SetOption` shall pass this option to `IoTHubClient_UploadToBlob_SetOption` and return its result. **]**
 
-|Name	                |Description
-|-----------------------|-----------------------|-----------------------|
-|IoTHubClient_UploadToBlob_SetOption	|Transport_SetOption|Return value
-| IOTHUB_CLIENT_OK                      | IOTHUB_CLIENT_OK          | IOTHUB_CLIENT_OK |
-| IOTHUB_CLIENT_OK                      | IOTHUB_CLIENT_ERROR       | IOTHUB_CLIENT_ERROR |
-| IOTHUB_CLIENT_OK                      | IOTHUB_CLIENT_INVALID_ARG | IOTHUB_CLIENT_OK |
-| IOTHUB_CLIENT_ERROR                   | ANY value                 | IOTHUB_CLIENT_ERROR
-| IOTHUB_CLIENT_ERRROR                  | IOTHUB_CLIENT_ERROR       | IOTHUB_CLIENT_ERROR
-| IOTHUB_CLIENT_INVALID_ARG             | value "X"                 | "X"
+**SRS_IOTHUBCLIENT_LL_30_011: [** `IoTHubClient_LL_SetOption` shall always pass unhandled options to `IoTHubClient_UploadToBlob_SetOption`. **]**
+
+**SRS_IOTHUBCLIENT_LL_30_012: [** If `Transport_SetOption` fails, `IoTHubClient_LL_SetOption` shall return that failure code. **]**
+
+**SRS_IOTHUBCLIENT_LL_30_013: [** If the `DONT_USE_UPLOADTOBLOB` compiler switch is undefined,  `IoTHubClient_LL_SetOption` shall pass unhandled options to `IoTHubClient_UploadToBlob_SetOption` and return its result. **]**
 
 
 ## IoTHubClient_LL_UploadToBlob
