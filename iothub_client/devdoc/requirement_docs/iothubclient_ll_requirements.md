@@ -478,7 +478,8 @@ IoTHubClient_LL_SetOption sets the runtime option "optionName" to the value poin
 
 **SRS_IOTHUBCLIENT_LL_30_010: [** `blob_xfr_timeout` - `IoTHubClient_LL_SetOption` shall pass this option to `IoTHubClient_UploadToBlob_SetOption` and return its result. **]**
 
-**SRS_IOTHUBCLIENT_LL_30_011: [** `IoTHubClient_LL_SetOption` shall always pass unhandled options to `Transport_SetOption`. **]**
+**SRS_IOTHUBCLIENT_LL_30_011: [** `IoTHubClient_LL_SetOption` shall always pass unhandled options to `Transport_SetOption
+`. **]**
 
 **SRS_IOTHUBCLIENT_LL_30_012: [** If `Transport_SetOption` fails, `IoTHubClient_LL_SetOption` shall return that failure code. **]**
 
@@ -521,6 +522,8 @@ extern IOTHUB_CLIENT_RESULT IoTHubClient_LL_UploadMultipleBlocksToBlobEx(IOTHUB_
 **SRS_IOTHUBCLIENT_LL_99_006: [** If `destinationFileName` is `NULL` then `IoTHubClient_LL_UploadMultipleBlocksToBlob(Ex)` shall fail and return `IOTHUB_CLIENT_INVALID_ARG`. **]**
 
 **SRS_IOTHUBCLIENT_LL_99_007: [** If `getDataCallback` is `NULL` then `IoTHubClient_LL_UploadMultipleBlocksToBlob(Ex)` shall fail and return `IOTHUB_CLIENT_INVALID_ARG`. **]**
+
+**SRS_IOTHUBCLIENT_LL_30_020: [** If the `blob_xfr_timeout` option has been set to non-zero, `IoTHubClient_LL_UploadMultipleBlocksToBlob(Ex)` shall set the timeout on the underlying transport accordingly. **]**
 
 These are the 3 steps that are required to upload a file to Azure Blob Storage using IoTHub: 
 step 1: get the SasUri components from IoTHub service
